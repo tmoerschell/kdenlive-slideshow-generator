@@ -50,23 +50,7 @@ if(len(sys.argv) < 2 ):
     print ("usage: ksg.py projekt.kdenlive")
     sys.exit()
 
-def makeEffect(inTime, outTime, frameW, frameH, imageW, imageH, orientation):
-
-    #portrait image orientation
-    if(orientation > 0):
-        startW = imageW * (zoom * 2)
-        startH = imageH * (zoom * 2)
-        endW = imageW * (zoom * 1.5)
-        endH = imageH * (zoom * 1.5)
-
-        startX = (frameW - startW) / 2
-        startY = startY = (frameH - startH) / 2
-        endX = (frameW - endW) / 2
-        endY = 0
-
-        return (inTime, round(startX), round(startY), round(startW), round(startH), outTime, round(endX), round(endY), round(endW), round(endH))
-
-    #landscape image orientation
+def makeEffect(inTime, outTime, frameW, frameH, imageW, imageH):
 
     #1 zoom in, 2 zoom out, 3 move
     effectType = random.randint(1,3)
@@ -258,21 +242,9 @@ for playlist in root.iterfind('playlist'):
             hRatio = targetWidth / sourceWidth
             vRatio = targetHeight / sourceHeight
 
-            portrait = 0
-
-            # patrait orientation images
-            if(sourceHeight > sourceWidth):
-
-                portrait = 1
-                ratio = min(hRatio, vRatio)
-                calcWidth = sourceWidth * ratio
-                calcHeight = sourceHeight * ratio
-
-            # landscape orientation images
-            else:
-                ratio = max(hRatio, vRatio)
-                calcWidth = sourceWidth * ratio
-                calcHeight = sourceHeight * ratio
+            ratio = max(hRatio, vRatio)
+            calcWidth = sourceWidth * ratio
+            calcHeight = sourceHeight * ratio
 
             # add the filter entries
             filter = ET.SubElement(entry, 'filter', {'id' : str(filterCounter)})
@@ -287,7 +259,7 @@ for playlist in root.iterfind('playlist'):
             kdenlive_id = ET.SubElement(filter, 'property', {'name' : 'kdenlive_id'})
             kdenlive_id.text = 'qtblend';
 
-            effectData = makeEffect(entryIn, entryOut, targetWidth, targetHeight, calcWidth, calcHeight, portrait)
+            effectData = makeEffect(entryIn, entryOut, targetWidth, targetHeight, calcWidth, calcHeight)
 
             # add the animation
             rect = ET.SubElement(filter, 'property', {'name' : 'rect'})
